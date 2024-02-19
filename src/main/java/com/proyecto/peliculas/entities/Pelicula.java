@@ -19,7 +19,10 @@ public class Pelicula implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaEstreno;
 
+    @ManyToOne
     private Genero genero;
+
+    @OneToMany
     private List<Actor> protagonistas;
 
     public Pelicula() {

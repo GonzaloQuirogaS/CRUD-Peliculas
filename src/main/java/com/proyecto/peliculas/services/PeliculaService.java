@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PeliculaService implements IPeliculaService{
+public class PeliculaService implements IPeliculaService {
 
     @Autowired
     private IPeliculasRepository peliculasRepository;
 
     @Override
     public void save(Pelicula pelicula) {
-    peliculasRepository.save(pelicula);
+        peliculasRepository.save(pelicula);
     }
 
     @Override

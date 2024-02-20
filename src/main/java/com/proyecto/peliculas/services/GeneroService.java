@@ -8,11 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GeneroService implements IGeneroService{
+public class GeneroService implements IGeneroService {
 
     @Autowired
     private IGeneroRepository generoRepository;
-
 
 
     @Override

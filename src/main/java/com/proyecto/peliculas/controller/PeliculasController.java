@@ -17,18 +17,18 @@ public class PeliculasController {
     }
 
     @GetMapping("/pelicula")
-    public String crear(Model model){
+    public String crear(Model model) {
         Pelicula pelicula = new Pelicula();
-        model.addAttribute("pelicula",pelicula);
-        model.addAttribute("titulo","Nueva Pelicula");
+        model.addAttribute("pelicula", pelicula);
+        model.addAttribute("titulo", "Nueva Pelicula");
         return "pelicula";
     }
 
     @GetMapping("/pelicula/{id}")
-    public String editar(@PathVariable(name = "id") Long id, Model model){
+    public String editar(@PathVariable(name = "id") Long id, Model model) {
         Pelicula pelicula = new Pelicula();
-        model.addAttribute("pelicula",pelicula);
-        model.addAttribute("titulo","Editar Pelicula");
+        model.addAttribute("pelicula", pelicula);
+        model.addAttribute("titulo", "Editar Pelicula");
         return "pelicula";
     }
 

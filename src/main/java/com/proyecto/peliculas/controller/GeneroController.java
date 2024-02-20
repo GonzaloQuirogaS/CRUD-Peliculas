@@ -1,16 +1,16 @@
 package com.proyecto.peliculas.controller;
 
-import com.proyecto.peliculas.dao.IGeneroRepository;
-import com.proyecto.peliculas.entities.Genero;
+ import com.proyecto.peliculas.entities.Genero;
+import com.proyecto.peliculas.services.IGeneroService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GeneroController {
 
-    private IGeneroRepository iGeneroRepository;
+   private IGeneroService generoService;
 
-    public GeneroController(IGeneroRepository iGeneroRepository) {
-        this.iGeneroRepository = iGeneroRepository;
+    public GeneroController(IGeneroService generoService) {
+        this.generoService = generoService;
     }
 
     @PostMapping("genero")
@@ -19,14 +19,14 @@ public class GeneroController {
         Genero genero = new Genero();
         genero.setNombre(nombre);
 
-        iGeneroRepository.save(genero);
+        generoService.save(genero);
 
         return genero.getId();
     }
 
     @GetMapping("genero/{id}")
     public String buscarPorId(@PathVariable(name = "id") Long id){
-        return iGeneroRepository.findById(id).getNombre();
+        return generoService.findById(id).getNombre();
     }
 
 }

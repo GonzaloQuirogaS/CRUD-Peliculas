@@ -24,7 +24,7 @@ public class Pelicula implements Serializable {
     @OneToOne
     private Genero genero;
 
-    @OneToMany
+    @ManyToMany
     private List<Actor> protagonistas;
 
     public Pelicula() {

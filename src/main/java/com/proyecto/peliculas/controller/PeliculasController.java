@@ -52,10 +52,9 @@ public class PeliculasController {
     }
 
     @PostMapping("/pelicula")
-    public String guardar(Pelicula pelicula, @ModelAttribute (name = "id") String id) {
-        List<Long> idProtagonistas = Arrays.stream(id.split(",")).map(Long::parseLong).collect(Collectors.toList());
-        List<Actor> protagonistas = actorService.findAllById(idProtagonistas);
-
+    public String guardar(Pelicula pelicula, @ModelAttribute (name = "ids") String ids) {
+        List<Long> idsProtagonistas = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        List<Actor> protagonistas = actorService.findAllById(idsProtagonistas);
         pelicula.setProtagonistas(protagonistas);
 
         peliculaService.save(pelicula);

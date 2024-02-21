@@ -7,6 +7,5 @@ import java.util.List;
 public interface IActorService {
     public List<Actor> findAll();
 
-    public List<Actor> findAllById(List<Long> id);
-
+    public List<Actor> findAllById(List<Long> ids);
 }

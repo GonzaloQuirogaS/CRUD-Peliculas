@@ -19,7 +19,7 @@ public class ActorService implements IActorService{
     }
 
     @Override
-    public List<Actor> findAllById(List<Long> id) {
-        return (List<Actor>) actorRepository.findAllById(id);
+    public List<Actor> findAllById(List<Long> ids) {
+        return (List<Actor>) actorRepository.findAllById(ids);
     }
 }

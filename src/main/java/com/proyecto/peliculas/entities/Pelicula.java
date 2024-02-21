@@ -1,6 +1,8 @@
 package com.proyecto.peliculas.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -14,13 +16,16 @@ public class Pelicula implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message = "El nombre no puede estar en blanco")
     private String nombre;
 
     @Column(name = "fecha_estreno")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "La fecha no puede estar en blanco")
     private Date fechaEstreno;
 
+    @NotNull(message = "El genero no puede estar en blanco")
     @OneToOne
     private Genero genero;
 

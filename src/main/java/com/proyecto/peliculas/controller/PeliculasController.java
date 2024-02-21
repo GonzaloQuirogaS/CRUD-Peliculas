@@ -5,8 +5,10 @@ import com.proyecto.peliculas.entities.Pelicula;
 import com.proyecto.peliculas.services.IActorService;
 import com.proyecto.peliculas.services.IGeneroService;
 import com.proyecto.peliculas.services.IPeliculaService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +39,7 @@ public class PeliculasController {
         Pelicula pelicula = new Pelicula();
         model.addAttribute("pelicula", pelicula);
         model.addAttribute("generos", generoService.findAll());
-        model.addAttribute("actores",actorService.findAll());
+        model.addAttribute("actores", actorService.findAll());
         model.addAttribute("titulo", "Nueva Pelicula");
         return "pelicula";
     }
@@ -52,7 +54,15 @@ public class PeliculasController {
     }
 
     @PostMapping("/pelicula")
-    public String guardar(Pelicula pelicula, @ModelAttribute (name = "ids") String ids) {
+    public String guardar(@Valid Pelicula pelicula, BindingResult br, @ModelAttribute(name = "ids") String ids, Model model) {
+
+        if(br.hasErrors()){
+            model.addAttribute("generos", generoService.findAll());
+            model.addAttribute("actores", actorService.findAll());
+            return "pelicula";
+        }
+
+
         List<Long> idsProtagonistas = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
         List<Actor> protagonistas = actorService.findAllById(idsProtagonistas);
         pelicula.setProtagonistas(protagonistas);

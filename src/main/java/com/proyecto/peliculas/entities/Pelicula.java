@@ -26,7 +26,7 @@ public class Pelicula implements Serializable {
     private Date fechaEstreno;
 
     @NotNull(message = "El genero no puede estar en blanco")
-    @OneToOne
+    @ManyToOne
     private Genero genero;
 
     @ManyToMany

@@ -3,17 +3,17 @@ package com.proyecto.peliculas.controller;
 import com.proyecto.peliculas.entities.Actor;
 import com.proyecto.peliculas.entities.Pelicula;
 import com.proyecto.peliculas.services.IActorService;
+import com.proyecto.peliculas.services.IArchivoService;
 import com.proyecto.peliculas.services.IGeneroService;
 import com.proyecto.peliculas.services.IPeliculaService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,10 +27,13 @@ public class PeliculasController {
 
     private IActorService actorService;
 
-    public PeliculasController(IPeliculaService peliculaService, IGeneroService generoService, IActorService actorService) {
+    private IArchivoService archivoService;
+
+    public PeliculasController(IPeliculaService peliculaService, IGeneroService generoService, IActorService actorService, IArchivoService archivoService) {
         this.peliculaService = peliculaService;
         this.generoService = generoService;
         this.actorService = actorService;
+        this.archivoService = archivoService;
     }
 
     @GetMapping("/pelicula")
@@ -54,13 +57,26 @@ public class PeliculasController {
     }
 
     @PostMapping("/pelicula")
-    public String guardar(@Valid Pelicula pelicula, BindingResult br, @ModelAttribute(name = "ids") String ids, Model model) {
+    public String guardar(@Valid Pelicula pelicula, BindingResult br, @ModelAttribute(name = "ids") String ids, Model model, @RequestParam("archivo") MultipartFile imagen) {
 
-        if(br.hasErrors()){
+        if (br.hasErrors()) {
             model.addAttribute("generos", generoService.findAll());
             model.addAttribute("actores", actorService.findAll());
             return "pelicula";
         }
+
+        if (!imagen.isEmpty()) {
+            String archivo = pelicula.getNombre() + this.getExtension(imagen.getOriginalFilename());
+            pelicula.setImagen(archivo);
+            try {
+                archivoService.guardar(archivo, imagen.getInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+         pelicula.setImagen("default.jpg");
+        }
+
 
 
         List<Long> idsProtagonistas = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
@@ -71,13 +87,17 @@ public class PeliculasController {
         return "redirect:home";
     }
 
+    private String getExtension(String archivo){
+        return archivo.substring(archivo.lastIndexOf("."));
+    }
+
     @GetMapping({"/", "/home", "/index"})
     public String home(Model model) {
 
 
-        model.addAttribute("peliculas",peliculaService.findAll());
-        model.addAttribute("msj","Catalogo actualizado");
-        model.addAttribute("tipoMsj","success");
+        model.addAttribute("peliculas", peliculaService.findAll());
+        //model.addAttribute("msj", "Catalogo actualizado");
+        //model.addAttribute("tipoMsj", "success");
 
         return "home";
     }

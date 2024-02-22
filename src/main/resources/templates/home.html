@@ -8,7 +8,7 @@
     <div class="row row-cols-1 row-cols-md-6 g-4">
         <div class="col" th:each="pelicula : ${peliculas}">
             <div class="card">
-                <img src="https://www.anahuac.mx/generacion-anahuac/sites/default/files/articles/SalaDeCine.jpg" class="card-img-top" alt="foto">
+                <img th:src="@{${'/archivo?n='} + ${pelicula.imagen == null ? 'default.jpg' : pelicula.imagen}}" class="card-img-top" alt="foto">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${pelicula.nombre}"></h5>
                     <p class="card-text" th:text="${pelicula.genero.nombre}"></p>

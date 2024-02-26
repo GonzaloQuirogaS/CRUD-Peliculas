@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -116,12 +117,28 @@ public class PeliculasController {
     }
 
     @GetMapping({"/listado"})
-    public String listado(Model model)   {
+    public String listado(Model model, @RequestParam(required = false) String msj, @RequestParam(required = false) String tipoMsj) {
         model.addAttribute("titulo", "Listado de peliculas");
         model.addAttribute("peliculas", peliculaService.findAll());
 
+        if (!"".equals(tipoMsj) && !"".equals(msj)) {
+            model.addAttribute("msj", msj);
+            model.addAttribute("tipoMsj", tipoMsj);
+        }
 
         return "listado";
+    }
+
+    @GetMapping("/pelicula/{id}/delete")
+    public String eliminar(@PathVariable(name = "id") Long id, Model model, RedirectAttributes redirectAttributes) {
+
+        peliculaService.delete(id);
+
+        redirectAttributes.addAttribute("msj", "La pelicula fue elmininada con exito");
+        redirectAttributes.addAttribute("tipoMsj", "success");
+
+
+        return "redirect:/listado";
     }
 
 

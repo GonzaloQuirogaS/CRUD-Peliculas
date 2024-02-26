@@ -49,12 +49,26 @@ public class PeliculasController {
 
     @GetMapping("/pelicula/{id}")
     public String editar(@PathVariable(name = "id") Long id, Model model) {
-        Pelicula pelicula = new Pelicula();
+
+        Pelicula pelicula = peliculaService.findById(id);
+        String ids = "";
+
+        for (Actor actor : pelicula.getProtagonistas()) {
+            if ("".equals(ids)) {
+                ids = actor.getId().toString();
+            } else {
+                ids = ids + "," + actor.getId().toString();
+            }
+        }
+
         model.addAttribute("pelicula", pelicula);
-        model.addAttribute("generos", generoService.findAll());
-        model.addAttribute("titulo", "Editar Pelicula");
+        model.addAttribute("ids", ids);
+        model.addAttribute("generos", this.generoService.findAll());
+        model.addAttribute("actores", this.actorService.findAll());
+        model.addAttribute("titulo", "Editar pelicula");
         return "pelicula";
     }
+
 
     @PostMapping("/pelicula")
     public String guardar(@Valid Pelicula pelicula, BindingResult br, @ModelAttribute(name = "ids") String ids, Model model, @RequestParam("archivo") MultipartFile imagen) {
@@ -74,32 +88,40 @@ public class PeliculasController {
                 throw new RuntimeException(e);
             }
         } else {
-         pelicula.setImagen("default.jpg");
+            pelicula.setImagen("default.jpg");
         }
 
-
-
-        List<Long> idsProtagonistas = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
-        List<Actor> protagonistas = actorService.findAllById(idsProtagonistas);
-        pelicula.setProtagonistas(protagonistas);
+        if (ids != null && !"".equals(ids)) {
+            List<Long> idsProtagonistas = Arrays.stream(ids.split(",")).map(Long::parseLong).collect(Collectors.toList());
+            List<Actor> protagonistas = actorService.findAllById(idsProtagonistas);
+            pelicula.setProtagonistas(protagonistas);
+        }
 
         peliculaService.save(pelicula);
         return "redirect:home";
     }
 
-    private String getExtension(String archivo){
+    private String getExtension(String archivo) {
         return archivo.substring(archivo.lastIndexOf("."));
     }
 
     @GetMapping({"/", "/home", "/index"})
     public String home(Model model) {
 
-
         model.addAttribute("peliculas", peliculaService.findAll());
         //model.addAttribute("msj", "Catalogo actualizado");
         //model.addAttribute("tipoMsj", "success");
 
         return "home";
+    }
+
+    @GetMapping({"/listado"})
+    public String listado(Model model)   {
+        model.addAttribute("titulo", "Listado de peliculas");
+        model.addAttribute("peliculas", peliculaService.findAll());
+
+
+        return "listado";
     }
 
 

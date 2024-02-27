@@ -7,6 +7,8 @@ import com.proyecto.peliculas.services.IArchivoService;
 import com.proyecto.peliculas.services.IGeneroService;
 import com.proyecto.peliculas.services.IPeliculaService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 public class PeliculasController {
@@ -107,9 +110,22 @@ public class PeliculasController {
     }
 
     @GetMapping({"/", "/home", "/index"})
-    public String home(Model model) {
+    public String home(Model model, @RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina) {
 
-        model.addAttribute("peliculas", peliculaService.findAll());
+        PageRequest pr = PageRequest.of(pagina, 12);
+        Page<Pelicula> page = peliculaService.findAll(pr);
+
+        if (page.getTotalPages() > 0) {
+            List<Integer> paginas = IntStream.rangeClosed(1, page.getTotalPages()).boxed().toList();
+            model.addAttribute("paginas", paginas);
+        }
+
+        model.addAttribute("actual", pagina + 1);
+
+        model.addAttribute("peliculas", page.getContent());
+        model.addAttribute("titulo", "Catalogo de peliculas");
+
+
         //model.addAttribute("msj", "Catalogo actualizado");
         //model.addAttribute("tipoMsj", "success");
 
